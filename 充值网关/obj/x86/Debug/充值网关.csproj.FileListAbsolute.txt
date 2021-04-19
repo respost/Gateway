@@ -1,0 +1,11 @@
+E:\C#\充值网关\充值网关\bin\Debug\充值网关.exe
+E:\C#\充值网关\充值网关\bin\Debug\充值网关.pdb
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.Form1.resources
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.Properties.Resources.resources
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.csproj.GenerateResource.Cache
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.exe
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.pdb
+E:\C#\充值网关\充值网关\bin\Debug\MySql.Data.dll
+E:\C#\充值网关\充值网关\obj\x86\Debug\充值网关.csprojResolveAssemblyReference.cache
+E:\C#\充值网关\充值网关\bin\Debug\充值网关.exe.config
+E:\C#\充值网关\充值网关\bin\Debug\Newtonsoft.Json.dll
