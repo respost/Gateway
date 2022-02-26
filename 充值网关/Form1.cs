@@ -19,7 +19,10 @@ namespace 充值网关
         //客户端连接对象
         private Session socketClient;
         //数据库操作对象
-        private MysqlBase Db;
+        private MysqlHelper mysqlHelper;
+        private SqlDbHelper sqlDbHelper;
+        //数据库类型
+        private string dbtype = "mysql";
 
         public Form1()
         {
@@ -46,6 +49,16 @@ namespace 充值网关
             this.txtAppkey.Text = AppSettings.GetValue("appkey");
             this.txtKey.Text = AppSettings.GetValue("key");
             this.txtSql.Text = AppSettings.GetValue("sql");
+            dbtype = AppSettings.GetValue("DbType");
+            if (dbtype != String.Empty && dbtype.Equals("sqlserver"))
+            {
+                radioSqlServer.Checked = true;
+            }
+            else
+            {
+                radioMysql.Checked = true;
+            }
+
         }
         /// <summary>
         /// 加载嵌入资源中的全部dll文件
@@ -164,20 +177,41 @@ namespace 充值网关
                 return;
             }
             //创建数据库连接
-            string txtDbHost = this.txtDbHost.Text.Trim();
-            string txtDbPort = this.txtDbPort.Text.Trim();
-            string txtDbUser = this.txtDbUser.Text.Trim();
-            string txtDbPassword = this.txtDbPassword.Text.Trim();
-            string database = data["database"];
-            if (database == string.Empty)
+            DbObject dbObject = new DbObject();
+            dbObject.Host = this.txtDbHost.Text.Trim();
+            if (dbtype.Equals("mysql"))
+            {
+                dbObject.Port = this.txtDbPort.Text.Trim();
+            }
+            dbObject.User= this.txtDbUser.Text.Trim();
+            dbObject.Password = this.txtDbPassword.Text.Trim();
+            dbObject.Name = data["database"];
+            if (dbObject.Name == string.Empty)
             {
                 Error("分区数据库不能为空，请前往平台修改分区设置");
                 return;
             }
-            string serverStr = String.Format("Database={0};Data Source={1};User Id={2};Password={3};pooling=false;CharSet=utf8;port={4}", database, txtDbHost, txtDbUser, txtDbPassword, txtDbPort);
-            Db = new MysqlBase(serverStr);
+            if (dbtype.Equals("mysql"))
+            {
+                updateMysql(data, dbObject);
+            }
+            else
+            {
+                updateSQLServer(data, dbObject);
+            }
+            
+            
+        }
+        private void updateSQLServer(Dictionary<String, String> data, DbObject dbObject)
+        {
+            string serverStr = String.Format("server={0};Database={1};User ID={2};Password={3};Integrated Security=sspi;Persist Security Info=True;pooling=true;", dbObject.Host, dbObject.Name, dbObject.User, dbObject.Password);
+            if (sqlDbHelper == null)
+            {
+                //SetTextMesssage("数据库连接字符串：" + serverStr);
+                sqlDbHelper = new SqlDbHelper(serverStr);
+            }
             //检测数据库连接
-            if (!Db.CheckConnectStatus())
+            if (!sqlDbHelper.CheckConnectStatus())
             {
                 Error("数据库连接失败，请检查网关数据库配置是否正确");
                 return;
@@ -189,7 +223,7 @@ namespace 充值网关
             //金额
             double money = Convert.ToDouble(data["money"]);
             //充值比例
-            int scale = Convert.ToInt32(data["scale"]);
+            double scale = Convert.ToDouble(data["scale"]);
             //游戏币
             double gold = money * scale;
             //分区
@@ -202,31 +236,93 @@ namespace 充值网关
             txtSql = txtSql.Replace("{account}", account);
             txtSql = txtSql.Replace("{money}", money.ToString());
             txtSql = txtSql.Replace("{gold}", gold.ToString());
-            txtSql = txtSql.Replace("{order_no}", gold.ToString());
+            txtSql = txtSql.Replace("{order_no}", ordernumber.ToString());
+            //SetTextMesssage("充值sql语句：" + txtSql);
             //执行SQL
-            Db.CreateCommand(txtSql);
-            int res = Db.commonExecute();
-            if (socketClient!=null)
-            {             
-                if (res>0)
+            int res = sqlDbHelper.ExecuteSql(txtSql);
+            if (res > 0)
+            {
+                //充值成功返回
+                string yxb = gold >= 10000 ? (gold / 10000).ToString() + '万' : gold.ToString();
+                string msg = String.Format("{0} 玩家“{1}”成功充值{2}元，获得{3}{4}个。", quname, account, money, alias, yxb);
+                SetTextMesssage(msg);
+                if (socketClient != null)
                 {
-                    //充值成功返回
-                    string yxb = gold >= 10000 ? (gold / 10000).ToString() + '万' : gold.ToString();
-                    string msg = String.Format("{0}玩家[{1}]成功充值{2}元，获得{3}{4}个。", quname, account, money, alias, yxb);
-                    SetTextMesssage(msg);
                     String paramString = Tool.toJson(1, msg);
                     socketClient.Send(System.Text.Encoding.Default.GetBytes(paramString));
                 }
-                else
-                {
-                    //充值失败返回
-                    string msg = String.Format("{0}玩家[{1}]充值失败，充值金额{2}元，订单编号：{3}", quname, account, money, ordernumber);
-                    SetTextMesssage(msg);
-                    String paramString = Tool.toJson(0, msg);
-                    socketClient.Send(System.Text.Encoding.Default.GetBytes(paramString));
-                }
             }
-            
+            else
+            {
+                //充值失败返回
+                string msg = String.Format("{0} 玩家“{1}”充值失败，充值金额{2}元，订单编号：{3}", quname, account, money, ordernumber);
+                SetTextMesssage(msg);
+                sendMsgBySocket(msg);
+            }
+        }
+
+        private void sendMsgBySocket(string msg)
+        {
+            if (socketClient != null)
+            {
+                String paramString = Tool.toJson(0, msg);
+                socketClient.Send(System.Text.Encoding.Default.GetBytes(paramString));
+            }
+        }
+
+        private void updateMysql(Dictionary<String, String> data, DbObject dbObject)
+        {
+            string serverStr = String.Format("Database={0};Data Source={1};User Id={2};Password={3};pooling=false;CharSet=utf8;port={4}", dbObject.Name, dbObject.Host, dbObject.User, dbObject.Password, dbObject.Port);
+            if (mysqlHelper == null)
+            {
+                //SetTextMesssage("数据库连接字符串：" + serverStr);
+                mysqlHelper = new MysqlHelper(serverStr);
+            }
+            //检测数据库连接
+            if (!mysqlHelper.CheckConnectStatus())
+            {
+                Error("数据库连接失败，请检查网关数据库配置是否正确");
+                return;
+            }
+            //执行充值SQL语句
+            string txtSql = this.txtSql.Text.Trim();
+            //账号
+            string account = data["account"];
+            //金额
+            double money = Convert.ToDouble(data["money"]);
+            //充值比例
+            double scale = Convert.ToDouble(data["scale"]);
+            //游戏币
+            double gold = money * scale;
+            //分区
+            string quname = data["quname"];
+            //游戏币别名
+            string alias = data["alias"];
+            //订单编号
+            string ordernumber = data["ordernumber"];
+            //替换SQL的字符
+            txtSql = txtSql.Replace("{account}", account);
+            txtSql = txtSql.Replace("{money}", money.ToString());
+            txtSql = txtSql.Replace("{gold}", gold.ToString());
+            txtSql = txtSql.Replace("{order_no}", ordernumber.ToString());
+            //执行SQL
+            //SetTextMesssage("充值sql语句：" + txtSql);
+            int res = mysqlHelper.commonExecute(txtSql);
+            if (res > 0)
+            {
+                //充值成功返回
+                string yxb = gold >= 10000 ? (gold / 10000).ToString() + '万' : gold.ToString();
+                string msg = String.Format("{0} 玩家“{1}”成功充值{2}元，获得{3}{4}个。", quname, account, money, alias, yxb);
+                SetTextMesssage(msg);
+                sendMsgBySocket(msg);
+            }
+            else
+            {
+                //充值失败返回
+                string msg = String.Format("{0} 玩家“{1}”充值失败，充值金额{2}元，订单编号：{3}", quname, account, money, ordernumber);
+                SetTextMesssage(msg);
+                sendMsgBySocket(msg);
+            }
         }
 
         private void Error(string msg)
@@ -255,7 +351,7 @@ namespace 充值网关
             string txtDbPort = this.txtDbPort.Text.Trim();
             if (txtDbPort == string.Empty)
             {
-                txtDbHost = "3306";
+                txtDbPort = "3306";
             }
             //数据库用户
             string txtDbUser = this.txtDbUser.Text.Trim();
@@ -281,8 +377,10 @@ namespace 充值网关
             if (!Tool.checkStr(this.txtSql, "充值SQL语句不能为空"))
                 return;
             string txtSql = this.txtSql.Text.Trim();
+            dbtype = radioSqlServer.Checked ? "sqlserver" : "mysql";
             try
             {
+                AppSettings.SetValue("DbType", dbtype);
                 AppSettings.SetValue("DbHost", txtDbHost);
                 AppSettings.SetValue("DbPort", txtDbPort);
                 AppSettings.SetValue("DbUser", txtDbUser);
@@ -300,15 +398,27 @@ namespace 充值网关
 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-           
-        }
 
         private void labelClearLog_Click(object sender, EventArgs e)
         {
             this.txtLog.Text = "";
             SetTextMesssage("日志已清空");
+        }
+
+        private void radioSqlServer_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioSqlServer.Checked)
+            {
+                txtDbHost.Text = ".";
+                txtDbPort.Text = "不需要填写";
+                txtDbUser.Text = "sa";
+            }
+            else
+            {
+                txtDbHost.Text = "127.0.0.1";
+                txtDbPort.Text = "3306";
+                txtDbUser.Text = "root";
+            }
         }
 
     }

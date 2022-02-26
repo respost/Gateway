@@ -39,6 +39,8 @@
             this.txtKey = new System.Windows.Forms.TextBox();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioSqlServer = new System.Windows.Forms.RadioButton();
+            this.radioMysql = new System.Windows.Forms.RadioButton();
             this.label11 = new System.Windows.Forms.Label();
             this.txtDbUser = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -55,11 +57,13 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label19 = new System.Windows.Forms.Label();
             this.txtSql = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -69,8 +73,6 @@
             this.txtAppkey = new System.Windows.Forms.TextBox();
             this.txtAppid = new System.Windows.Forms.TextBox();
             this.labelClearLog = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -178,6 +180,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioSqlServer);
+            this.groupBox2.Controls.Add(this.radioMysql);
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.txtDbUser);
             this.groupBox2.Controls.Add(this.label8);
@@ -194,11 +198,38 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "数据库配置";
             // 
+            // radioSqlServer
+            // 
+            this.radioSqlServer.AutoSize = true;
+            this.radioSqlServer.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioSqlServer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.radioSqlServer.Location = new System.Drawing.Point(116, 22);
+            this.radioSqlServer.Name = "radioSqlServer";
+            this.radioSqlServer.Size = new System.Drawing.Size(126, 21);
+            this.radioSqlServer.TabIndex = 6;
+            this.radioSqlServer.Text = "SQL Server数据库";
+            this.radioSqlServer.UseVisualStyleBackColor = true;
+            this.radioSqlServer.CheckedChanged += new System.EventHandler(this.radioSqlServer_CheckedChanged);
+            // 
+            // radioMysql
+            // 
+            this.radioMysql.AutoSize = true;
+            this.radioMysql.Checked = true;
+            this.radioMysql.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioMysql.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.radioMysql.Location = new System.Drawing.Point(16, 22);
+            this.radioMysql.Name = "radioMysql";
+            this.radioMysql.Size = new System.Drawing.Size(103, 21);
+            this.radioMysql.TabIndex = 6;
+            this.radioMysql.TabStop = true;
+            this.radioMysql.Text = "MySQL数据库";
+            this.radioMysql.UseVisualStyleBackColor = true;
+            // 
             // label11
             // 
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.label11.Location = new System.Drawing.Point(10, 129);
+            this.label11.Location = new System.Drawing.Point(10, 142);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(77, 12);
             this.label11.TabIndex = 5;
@@ -208,7 +239,7 @@
             // 
             this.txtDbUser.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtDbUser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtDbUser.Location = new System.Drawing.Point(89, 120);
+            this.txtDbUser.Location = new System.Drawing.Point(89, 133);
             this.txtDbUser.Name = "txtDbUser";
             this.txtDbUser.Size = new System.Drawing.Size(146, 29);
             this.txtDbUser.TabIndex = 1;
@@ -217,7 +248,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.label8.Location = new System.Drawing.Point(22, 30);
+            this.label8.Location = new System.Drawing.Point(22, 61);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(65, 12);
             this.label8.TabIndex = 5;
@@ -227,7 +258,7 @@
             // 
             this.txtDbHost.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtDbHost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtDbHost.Location = new System.Drawing.Point(89, 21);
+            this.txtDbHost.Location = new System.Drawing.Point(89, 52);
             this.txtDbHost.Name = "txtDbHost";
             this.txtDbHost.Size = new System.Drawing.Size(146, 29);
             this.txtDbHost.TabIndex = 0;
@@ -255,7 +286,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.label9.Location = new System.Drawing.Point(10, 82);
+            this.label9.Location = new System.Drawing.Point(10, 102);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(77, 12);
             this.label9.TabIndex = 5;
@@ -265,7 +296,7 @@
             // 
             this.txtDbPort.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtDbPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txtDbPort.Location = new System.Drawing.Point(89, 73);
+            this.txtDbPort.Location = new System.Drawing.Point(89, 93);
             this.txtDbPort.Name = "txtDbPort";
             this.txtDbPort.Size = new System.Drawing.Size(146, 29);
             this.txtDbPort.TabIndex = 2;
@@ -358,13 +389,13 @@
             this.label19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.label19.Location = new System.Drawing.Point(15, 185);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(592, 16);
+            this.label19.Size = new System.Drawing.Size(624, 16);
             this.label19.TabIndex = 5;
-            this.label19.Text = "update chongzhi  set money={money},gold={gold}  where account=\'{account}\'";
+            this.label19.Text = "update chongzhi  set money=\'{money}\',gold=\'{gold}\'  where account=\'{account}\'";
             // 
             // txtSql
             // 
-            this.txtSql.BackColor = System.Drawing.SystemColors.Menu;
+            this.txtSql.BackColor = System.Drawing.Color.White;
             this.txtSql.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtSql.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtSql.Location = new System.Drawing.Point(13, 24);
@@ -373,12 +404,23 @@
             this.txtSql.Size = new System.Drawing.Size(645, 98);
             this.txtSql.TabIndex = 4;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label4.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.label4.Location = new System.Drawing.Point(545, 137);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(119, 14);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "代替，订单编号以";
+            // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label18.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label18.Location = new System.Drawing.Point(106, 160);
+            this.label18.Location = new System.Drawing.Point(103, 160);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(119, 14);
             this.label18.TabIndex = 3;
@@ -389,7 +431,7 @@
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label16.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label16.Location = new System.Drawing.Point(381, 137);
+            this.label16.Location = new System.Drawing.Point(386, 137);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(105, 14);
             this.label16.TabIndex = 3;
@@ -400,7 +442,7 @@
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label13.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label13.Location = new System.Drawing.Point(211, 137);
+            this.label13.Location = new System.Drawing.Point(205, 137);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(119, 14);
             this.label13.TabIndex = 2;
@@ -411,29 +453,40 @@
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.label17.Location = new System.Drawing.Point(486, 137);
+            this.label17.Location = new System.Drawing.Point(488, 137);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(49, 14);
+            this.label17.Size = new System.Drawing.Size(63, 14);
             this.label17.TabIndex = 1;
-            this.label17.Text = "{gold}";
+            this.label17.Text = "\'{gold}\'";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.label15.Location = new System.Drawing.Point(326, 137);
+            this.label15.Location = new System.Drawing.Point(322, 137);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(56, 14);
+            this.label15.Size = new System.Drawing.Size(70, 14);
             this.label15.TabIndex = 1;
-            this.label15.Text = "{money}";
+            this.label15.Text = "\'{money}\'";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.label20.Location = new System.Drawing.Point(11, 160);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(91, 14);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "\'{order_no}\'";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.label12.Location = new System.Drawing.Point(133, 137);
+            this.label12.Location = new System.Drawing.Point(127, 137);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(84, 14);
             this.label12.TabIndex = 1;
@@ -444,7 +497,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label10.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label10.Location = new System.Drawing.Point(15, 137);
+            this.label10.Location = new System.Drawing.Point(9, 137);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(119, 14);
             this.label10.TabIndex = 0;
@@ -529,28 +582,6 @@
             this.labelClearLog.Text = "清空日志";
             this.labelClearLog.Click += new System.EventHandler(this.labelClearLog_Click);
             // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.label20.Location = new System.Drawing.Point(15, 160);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(91, 14);
-            this.label20.TabIndex = 1;
-            this.label20.Text = "\'{order_no}\'";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label4.Location = new System.Drawing.Point(539, 137);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(119, 14);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "代替，订单编号以";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -564,9 +595,8 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "通用充值网关 - 元宝支付（18pay.net）";
+            this.Text = "充值网关 - 元宝支付（18pay.net）";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -629,6 +659,8 @@
         private System.Windows.Forms.Label labelClearLog;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.RadioButton radioSqlServer;
+        private System.Windows.Forms.RadioButton radioMysql;
     }
 }
 
