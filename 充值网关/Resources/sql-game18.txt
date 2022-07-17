@@ -1,0 +1,2 @@
+insert into yuanbao(zhanghao,jin,shifoulingqu,shijian,jine,order_id)values('{account}',{gold},0,NULL,{money},NOW());
+insert into charge(account,coin,money,state,add_time,update_time,code)values('{account}','{money}',0,'{gold}',NOW(),NOW(),(select yaoqingma from accounts where account='{account}'));

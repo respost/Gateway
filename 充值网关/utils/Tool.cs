@@ -4,11 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
+using System.Data;
 
 namespace 充值网关.utils
 {
      public static class Tool
     {
+        /// <summary>
+        /// 判断DataSet是否为空
+        /// </summary>
+        /// <param name="ds">需要判断的DataSet</param>
+        /// <returns>如果ds为空，返回true</returns>
+         public static bool DataSetIsNullOrEmpty(DataSet ds)
+        {
+            bool Flag = false;
+            if ((ds == null) || (ds.Tables.Count == 0) || (ds.Tables.Count == 1 && ds.Tables[0].Rows.Count == 0))
+                Flag = true;
+            return Flag;
+        }
         /// <summary>
         /// 检测字符串是否为空
         /// </summary>
@@ -18,7 +31,7 @@ namespace 充值网关.utils
         public static bool checkStr(TextBox textbox, string msg)
         {
             string text = textbox.Text.Trim();
-            if (text == string.Empty)
+            if (string.IsNullOrEmpty(text))
             {
                 MessageBox.Show(msg, "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 textbox.Focus();

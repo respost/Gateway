@@ -38,6 +38,9 @@ namespace 充值网关
             bool IsCanConnectioned = false;
             try
             {
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
                 conn.Open();
                 if (conn.State == ConnectionState.Open)
                 {
@@ -99,6 +102,9 @@ namespace 充值网关
                 {
                     try
                     {
+                        //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                        if (connection.State == ConnectionState.Open)
+                            connection.Close();
                         connection.Open();
                         object obj = cmd.ExecuteScalar();
                         if ((Object.Equals(obj, null)) || (Object.Equals(obj, System.DBNull.Value)))
@@ -111,8 +117,15 @@ namespace 充值网关
                         }
                     }
                     catch (System.Data.SqlClient.SqlException){
-                        connection.Close();
                         return null;
+                    }
+                    finally
+                    {
+
+                        if (connection != null)
+                        {
+                            connection.Close();
+                        }
                     }
                 }
             }
@@ -162,7 +175,11 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return flag;
         }
@@ -194,9 +211,48 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return ds;
+        }
+    /// <summary>
+    /// 存储过程的调用
+    /// </summary>
+    /// <param name="name">存储过程的名字</param>
+    /// <param name="paras">需要传入的参数列表</param>
+    /// <returns></returns>
+        public DataTable ExecSql(string name, SqlParameter[] paras = null)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(name, conn);
+                //给命令对象指定 要执行的是存储过程
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (paras != null)
+                {
+                    //将参数列表添加到命令对象的参数列表中
+                    cmd.Parameters.AddRange(paras);
+                }
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                sda.Fill(dt);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                conn.Close();
+            }           
+            return dt;
         }
         /// <summary>
         /// 执行SQL语句，返回影响的记录数
@@ -205,6 +261,7 @@ namespace 充值网关
         /// <returns>影响的记录数</returns>
         public int ExecuteSql(string SQLString)
         {
+            int res = 0;
             try
             {
                 //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
@@ -213,36 +270,26 @@ namespace 充值网关
                 conn.Open();
                 //建立连接，并执行sql语句命令
                 SqlCommand command = new SqlCommand(SQLString, conn);
-                int num = command.ExecuteNonQuery();
-                  return num;
+                if (SQLString.ToUpper().Contains("EXEC"))
+                {
+                    //可以是“存储过程名称”，也可以是“EXEC 存储过程语句；
+                    command.CommandType = CommandType.Text;
+                }
+                res = command.ExecuteNonQuery();
             }
             catch (Exception)
             {
-                return 0;
+                res = 0;
             }
             finally
             {
-                conn.Close();
-            }
-            /*
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand(SQLString, connection))
+
+                if (conn != null)
                 {
-                    try
-                    {
-                        connection.Open();
-                        int rows = cmd.ExecuteNonQuery();
-                        return rows;
-                    }
-                    catch (System.Data.SqlClient.SqlException)
-                    {
-                        connection.Close();
-                        return 0;
-                    }
+                    conn.Close();
                 }
             }
-             */
+            return res;
         }
         /// <summary>
         /// 普通查询
@@ -277,6 +324,14 @@ namespace 充值网关
             catch (Exception)
             {
                 dr = null;
+            }
+            finally
+            {
+
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return dr;
         }
@@ -333,7 +388,11 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return result;
         }
@@ -378,7 +437,11 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return flag;
         }

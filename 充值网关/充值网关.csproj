@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbObject.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="utils\AppSettings.cs" />
     <Compile Include="utils\Des.cs" />
     <Compile Include="Form1.cs">
@@ -74,6 +75,8 @@
     <Compile Include="utils\SocketHelper.cs" />
     <Compile Include="utils\SqlDbHelper.cs" />
     <Compile Include="utils\Tool.cs" />
+    <Compile Include="utils\TxtHelper.cs" />
+    <Compile Include="utils\XmlHelper.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -100,6 +103,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cz.ico" />
+    <None Include="Resources\sql-game18.txt" />
+    <None Include="Resources\sql-game20.txt" />
+    <None Include="Resources\sql-game10.txt" />
+    <None Include="Resources\updater.exe" />
     <None Include="Resources\Newtonsoft.Json.dll" />
     <None Include="Resources\MySql.Data.dll" />
   </ItemGroup>

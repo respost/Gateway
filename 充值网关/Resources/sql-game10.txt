@@ -1,0 +1,19 @@
+update MEMB_INFO set myCash=myCash+{gold} where memb___id='{account}'
+DECLARE @Stat	 int
+SELECT @Stat=member FROM MEMB_INFO WHERE memb___id = '{account}'
+UPDATE MEMB_INFO SET member=1
+Where {gold} >= 100 and @Stat=0 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=2
+Where {gold} >= 200 and @Stat=1 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=3
+Where {gold} >= 300 and @Stat=2 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=4
+Where {gold} >= 400 and @Stat=3 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=5
+Where {gold} >= 500 and @Stat=4 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=6
+Where {gold} >= 600 and @Stat=5 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=7
+Where {gold} >= 700 and @Stat=6 and memb___id='{account}'
+UPDATE MEMB_INFO SET member=8
+Where {gold} >= 800 and @Stat=7 and memb___id='{account}'

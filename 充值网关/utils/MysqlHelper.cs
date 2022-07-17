@@ -35,6 +35,9 @@ namespace 充值网关
             bool result = false;
             try
             {
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
                 conn.Open();
                 if (conn.State == ConnectionState.Open)
                 {
@@ -48,9 +51,47 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return result;
+        }
+        /// <summary>
+        /// 存储过程的调用
+        /// </summary>
+        /// <param name="name">存储过程的名字</param>
+        /// <param name="paras">需要传入的参数列表</param>
+        /// <returns></returns>
+        public DataTable ExecSql(string name, MySqlParameter[] paras = null)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(name, conn);
+                //给命令对象指定 要执行的是存储过程
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (paras != null)
+                {
+                    //将参数列表添加到命令对象的参数列表中
+                    cmd.Parameters.AddRange(paras);
+                }
+                MySqlDataAdapter sda = new MySqlDataAdapter(cmd);
+                sda.Fill(dt);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return dt;
         }
         /// <summary>
         /// 增、删、改公共方法
@@ -58,7 +99,7 @@ namespace 充值网关
         /// <returns></returns>
         public int commonExecute(string sql)
         {
-            int res = -1;
+            int res = 0;
             try
             {
                 //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
@@ -66,12 +107,24 @@ namespace 充值网关
                     conn.Close();
                 conn.Open();
                 command = new MySqlCommand(sql, conn);
+                if (sql.ToUpper().Contains("CALL"))
+                {
+                    //可以是“存储过程名称”，也可以是“EXEC 存储过程语句；
+                    command.CommandType = CommandType.Text;
+                }
                 res = command.ExecuteNonQuery();
             }
             catch (MySqlException)
             {
+                res = 0;
             }
-            conn.Close();
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
             return res;
         }
         /// <summary>
@@ -81,17 +134,31 @@ namespace 充值网关
         /// <returns></returns>
         public DataTable query(string sql)
         {
-            //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
-            if (conn.State == ConnectionState.Open)
-                conn.Close();
-            conn.Open();
-            command = new MySqlCommand(sql, conn);
-            DataTable dt = new DataTable();
-            using (reader = command.ExecuteReader(CommandBehavior.CloseConnection))
+            try
             {
-                dt.Load(reader);
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+                conn.Open();
+                command = new MySqlCommand(sql, conn);
+                DataTable dt = new DataTable();
+                using (reader = command.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    dt.Load(reader);
+                }
+                return dt;
             }
-            return dt;
+            catch (MySqlException)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
         }
         /// <summary>
         /// 获取DataSet数据集
@@ -101,16 +168,30 @@ namespace 充值网关
         /// <returns></returns>
         public DataSet GetDataSet(string sql, string tablename)
         {
-            //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
-            if (conn.State == ConnectionState.Open)
+            try
+            {
+                //当连接处于打开状态时关闭,然后再打开,避免有时候数据不能及时更新
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+                conn.Open();
+                command = new MySqlCommand(sql, conn);
+                DataSet dataset = new DataSet();
+                MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                adapter.Fill(dataset, tablename);
                 conn.Close();
-            conn.Open();
-            command = new MySqlCommand(sql, conn);
-            DataSet dataset = new DataSet();
-            MySqlDataAdapter adapter = new MySqlDataAdapter(command);
-            adapter.Fill(dataset, tablename);
-            conn.Close();
-            return dataset;
+                return dataset;
+            }
+            catch (MySqlException)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
         }
         /// <summary>
         /// 实现多SQL语句执行的数据库事务
@@ -147,7 +228,10 @@ namespace 充值网关
             }
             finally
             {
-                conn.Close();
+                if (conn != null)
+                {
+                    conn.Close();
+                }
             }
             return flag;
         }
