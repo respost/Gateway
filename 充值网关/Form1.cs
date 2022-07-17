@@ -17,7 +17,7 @@ namespace 充值网关
     public partial class Form1 : Form
     {
         /*--------------------软件更新配置 start------------------*/
-        private double version = 1.3;
+        private double version = 1.4;
         private string updateUrl = "http://www.18pay.net/gateway/";
         /*--------------------软件更新配置 end--------------------*/
         //套接字
@@ -393,22 +393,48 @@ namespace 充值网关
             }
             else
             {
-                string txtTable = this.txtTable.Text.Trim();
+                //1.判断服务器传输过来的数据里，是否包含游戏币表名
+                string txtTable = "";
+                if (data.ContainsKey("table_name") && !string.IsNullOrEmpty(data["table_name"]))
+                {
+                    txtTable = data["table_name"];
+                }
+                else{
+                    txtTable = this.txtTable.Text.Trim();
+                }
                 if (string.IsNullOrEmpty(txtTable))
                 {
-                    SetTextMesssage("游戏币表名不能为空");
+                    Error("游戏币表名不能为空");
                     return;
                 }
-                string txtColumnAccount = this.txtColumnAccount.Text.Trim();
+                //2.判断服务器传输过来的数据里，是否包含账号字段名
+                string txtColumnAccount = "";
+                if (data.ContainsKey("column_account") && !string.IsNullOrEmpty(data["column_account"]))
+                {
+                    txtColumnAccount = data["column_account"];
+                }
+                else
+                {
+                    txtColumnAccount = this.txtColumnAccount.Text.Trim();
+                }
                 if (string.IsNullOrEmpty(txtColumnAccount))
                 {
-                    SetTextMesssage("账号字段名不能为空");
+                    Error("账号字段名不能为空");
                     return;
                 }
-                string txtColumnGold = this.txtColumnGold.Text.Trim();
+                //3.判断服务器传输过来的数据里，是否包含游戏币字段名
+                string txtColumnGold = "";
+                if (data.ContainsKey("column_gold") && !string.IsNullOrEmpty(data["column_gold"]))
+                {
+                    txtColumnGold = data["column_gold"];
+                }
+                else
+                {
+                    txtColumnGold = this.txtColumnGold.Text.Trim();
+                }
                 if (string.IsNullOrEmpty(txtColumnGold))
                 {
-                    SetTextMesssage("游戏币字段名不能为空");
+                    Error("游戏币字段名不能为空");
                     return;
                 }
                 txtSql = String.Format("update {0}  set {1}={1}+{2} where {3}='{4}'", txtTable, txtColumnGold, gold, txtColumnAccount, account);
@@ -425,15 +451,13 @@ namespace 充值网关
                 //充值成功返回
                 string yxb = gold >= 10000 ? (gold / 10000).ToString() + '万' : gold.ToString();
                 string msg = String.Format("{0} 玩家“{1}”成功充值{2}元，获得{3}{4}个。", quname, account, money, alias, yxb);
-                SetTextMesssage(msg);
-                sendMsgBySocket(1, msg);
+                Success(msg);
             }
             else
             {
                 //充值失败返回
                 string msg = String.Format("{0} 玩家“{1}”充值失败，充值金额{2}元，订单编号：{3}", quname, account, money, ordernumber);
-                SetTextMesssage(msg);
-                sendMsgBySocket(0, msg);
+                Error(msg);
             }
         }
         private bool SQLServerResult(string sql)
@@ -480,14 +504,6 @@ namespace 充值网关
             }
             return flag;
         }
-        private void sendMsgBySocket(int code, string msg)
-        {
-            if (socketClient != null)
-            {
-                String paramString = Tool.toJson(code, msg);
-                socketClient.Send(System.Text.Encoding.Default.GetBytes(paramString));
-            }
-        }
 
         private void Error(string msg)
         {
@@ -495,6 +511,14 @@ namespace 充值网关
             if (socketClient != null)
             {
                 socketClient.Send(System.Text.Encoding.Default.GetBytes(Tool.toJson(0, msg)));
+            }
+        }
+        private void Success(string msg)
+        {
+            SetTextMesssage(msg);
+            if (socketClient != null)
+            {
+                socketClient.Send(System.Text.Encoding.Default.GetBytes(Tool.toJson(1, msg)));
             }
         }
 
